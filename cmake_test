@@ -1,92 +1,6 @@
 #!/Library/Frameworks/Python.framework/Versions/3.10/bin/python3
-import os
-import shutil
 import argparse
-from typing import Tuple
-
-from cmakelists_templates import (get_main_template,
-                                  get_sub_dirs,
-                                  get_mocks_template,
-                                  get_src_template,
-                                  get_tests_template)
-from header_templates import get_config_header
-from source_templates import get_main, get_test_runner, get_main_test, get_library_main
-
-
-def touch(directory, file):
-    path = os.path.join(directory, file)
-    with open(path, 'w') as _:
-        pass
-
-
-def write(file, contents):
-    with open(file, "w") as f:
-        f.write(contents)
-
-
-def create_folder(parent: str,
-                  folder_name: str,
-                  project_name: str = None,
-                  overwrite: bool = False,
-                  main_folder: bool = False) -> Tuple[bool, str]:
-    ret = False
-    creating_dir = os.path.join(parent, folder_name)
-    try:
-        os.mkdir(creating_dir)
-        cmake = os.path.join(creating_dir, "CMakeLists.txt")
-        if main_folder:
-            write(cmake, get_main_template(project_name))
-        match folder_name:
-            case 'mocks':
-                touch(creating_dir, 'mockLib.c')
-                write(cmake, get_mocks_template(project_name))
-            case 'include':
-                path = os.path.join(creating_dir, f'{project_name}Config.h.in')
-                write(path, get_config_header(project_name))
-                _, created = create_folder(creating_dir, project_name, project_name, overwrite=overwrite)
-                touch(created, f'{project_name}.h')
-            case 'src':
-                write(cmake, get_src_template(project_name))
-                _, created = create_folder(creating_dir, project_name, project_name, overwrite=overwrite)
-                src_path = os.path.join(creating_dir, f'main.c')
-                lib_main = os.path.join(created, f'{project_name}.c')
-                write(src_path, get_main(project_name))
-                write(lib_main, get_library_main(project_name))
-            case 'tests':
-                write(cmake, get_tests_template(project_name))
-                _, created = create_folder(creating_dir, project_name, project_name, overwrite=overwrite)
-                test_runner_path = os.path.join(creating_dir, 'RunAllTests.cpp')
-                write(test_runner_path, get_test_runner(project_name))
-                main_test = os.path.join(created, f'{project_name}Test.cpp')
-                write(main_test, get_main_test(project_name))
-        ret = True
-
-    except FileExistsError:
-        if not overwrite:
-            delete = input(
-                f"The folder {creating_dir} already exists. "
-                f"If you continue you will delete this entire directory. Continue? Y/[n]"
-            )
-            if delete.lower() == 'y':
-                shutil.rmtree(creating_dir)
-                ret = create_folder(parent, folder_name, project_name, main_folder=True)
-        else:
-            shutil.rmtree(creating_dir)
-            ret = create_folder(parent, folder_name, main_folder=True)
-    return ret, creating_dir
-
-
-def main(args):
-    project_name = args.name
-    path = args.folder
-    overwrite = args.overwrite
-    ok, parent_dir = create_folder(path, project_name, project_name, overwrite=overwrite, main_folder=True)
-    if ok:
-        sub_dirs = get_sub_dirs()
-        for d in sub_dirs:
-            create_folder(parent_dir, d, project_name)
-    print(f'Projected created in {parent_dir}')
-
+from folder_creation import main
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -103,3 +17,4 @@ if __name__ == "__main__":
         '-o', '--overwrite', help='overwrite if project already exists', action='store_true'
     )
     main(parser.parse_args())
+

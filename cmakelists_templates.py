@@ -1,7 +1,3 @@
-def get_sub_dirs():
-    return "include", "mocks", "src", "tests"
-
-
 def get_main_template(project_name: str, cmake_version: str = "3.21"):
     return (
         f"cmake_minimum_required(VERSION {cmake_version})\n"
@@ -35,37 +31,39 @@ def get_main_template(project_name: str, cmake_version: str = "3.21"):
 
 def get_mocks_template(project_name: str):
     return (
-        f'project ({project_name})\n'
-        f'\n'
-        f'include_directories(${{PROJECT_SOURCE_DIR}}/../include)\n'
-        f'add_library(mockLib mockLib.c)'
+        f"project ({project_name})\n"
+        f"\n"
+        f"include_directories(${{PROJECT_SOURCE_DIR}}/../include)\n"
+        f"add_library(mockLib mockLib.c)"
     )
 
 
 def get_src_template(project_name: str):
     return (
-        f'project ({project_name})\n'
-        f'\n'
-        f'include_directories(${{PROJECT_SOURCE_DIR}}/../include)\n'
-        f'include_directories(${{PROJECT_SOURCE_DIR}}/../include/{project_name}/)\n'
-        f'# uncomment below and make changes as necessary to add library to project\n'
-        f'# include_directories(${{PROJECT_SOURCE_DIR}}/../include/ExtraLibrary/)\n'
-        f'\n'
-        f'configure_file (\n'
+        f"project ({project_name})\n"
+        f"\n"
+        f"include_directories(${{PROJECT_SOURCE_DIR}}/../include)\n"
+        f"include_directories(${{PROJECT_SOURCE_DIR}}/../include/{project_name}/)\n"
+        f"# uncomment below and make changes as necessary to add library to project\n"
+        f"# include_directories(${{PROJECT_SOURCE_DIR}}/../include/ExtraLibrary/)\n"
+        f"\n"
+        f"configure_file (\n"
         f'    "${{PROJECT_SOURCE_DIR}}/../include/{project_name}Config.h.in"\n'
         f'    "${{PROJECT_BINARY_DIR}}/{project_name}Config.h"\n'
-        f')\n'
-        f'# uncomment below and make changes as necessary to add library to project\n'
-        f'# add_library(ExtraLibrary ./ExtraLibrary.c)\n'
-        f'\n'
-        f'add_library({project_name} ./{project_name}/{project_name}.c)\n'
-        f'add_executable(main ./main.c)'
+        f")\n"
+        f"# uncomment below and make changes as necessary to add library to project\n"
+        f"# add_library(ExtraLibrary ./ExtraLibrary.c)\n"
+        f"\n"
+        f"add_library({project_name} ./{project_name}/{project_name}.c)\n"
+        f"add_executable(main ./main.c)\n"
+        f"target_link_libraries(main {project_name})"
     )
 
 
-def get_tests_template(project_name: str):
+def get_tests_template(project_name: str, cmake_version: str = "3.21"):
     return (
         f"project({project_name})\n"
+        f"cmake_minimum_required(VERSION {cmake_version})\n"
         f"\n"
         f"# include project source\n"
         f"include_directories(${{PROJECT_SOURCE_DIR}}/../include)\n"

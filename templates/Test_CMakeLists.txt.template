@@ -1,0 +1,30 @@
+project ($project_name)
+cmake_minimum_required(VERSION 3.21)
+
+# begin include
+# end include
+
+# include CppUTest headers
+include_directories($ENV{CPPUTEST_HOME}/include)
+
+# include CMock headers
+include_directories($ENV{CMOCK_HOME}/src)
+
+# add cpputest library
+add_library(imp_cpputest STATIC IMPORTED)
+add_library(imp_cpputest_ext STATIC IMPORTED)
+set_property(TARGET imp_cpputest PROPERTY
+        IMPORTED_LOCATION $ENV{CPPUTEST_HOME}/cpputest_build/lib/libCppUTest.a)
+set_property(TARGET imp_cpputest_ext PROPERTY
+        IMPORTED_LOCATION $ENV{CPPUTEST_HOME}/cpputest_build/lib/libCppUTestExt.a)
+
+# begin libraries
+# end libraries
+
+# begin executables
+add_executable(RunAllTests RunAllTests.cpp)
+# end executables
+
+# begin linking
+target_link_libraries(RunAllTests imp_cpputest imp_cpputest_ext FakeTimeServiceTest FakeTimeService  LightSchedulerTest LightScheduler RandomMinuteTest RandomMinute LightSchedulerRandomizeTest FakeRandomMinuteTest FakeRandomMinute Utils FormatOutputSpyTest FormatOutputSpy CircularBufferPrintTest CircularBuffer IOTest IO FlashTest Flash MockIO FakeMicroTime MicroTimeTest MicroTime FlashTestMockSupport LightDriverTest LightDriver X10LightDriverTest X10LightDriver LightControllerTest LightController LightDriverSpyTest LightDriver LightDriverSpy)
+# end linking

@@ -1,6 +1,6 @@
 def get_main(project_name: str):
     return (
-        f"#include \"{project_name}.h\"\n"
+        f'#include "{project_name}.h"\n'
         f"\n"
         f"int main (int argc, char ** argv)\n"
         f"{{\n"
@@ -10,15 +10,12 @@ def get_main(project_name: str):
 
 
 def get_library_main(project_name: str):
-    return (
-        f"#include \"{project_name}.h\"\n"
-    )
-
+    return f'#include "{project_name}.h"\n'
 
 
 def get_test_runner(project_name: str):
     return (
-        f"#include \"CppUTest/CommandLineTestRunner.h\"\n"
+        f'#include "CppUTest/CommandLineTestRunner.h"\n'
         f"\n"
         f"IMPORT_TEST_GROUP({project_name});\n"
         f"\n"
@@ -32,13 +29,13 @@ def get_test_runner(project_name: str):
 def get_main_test(project_name: str):
     return (
         f"#pragma clang diagnostic push\n"
-        f"#pragma clang diagnostic ignored \"-Wunknown-pragmas\"\n"
-        f"#pragma ide diagnostic ignored \"cert-err58-cpp\"\n"
-        f"#include \"CppUTest/TestHarness.h\"\n"
+        f'#pragma clang diagnostic ignored "-Wunknown-pragmas"\n'
+        f'#pragma ide diagnostic ignored "cert-err58-cpp"\n'
+        f'#include "CppUTest/TestHarness.h"\n'
         f"\n"
-        f"extern \"C\"\n"
+        f'extern "C"\n'
         f"{{\n"
-        f"#   include \"{project_name}.h\"\n"
+        f'#   include "{project_name}.h"\n'
         f"}}\n"
         f"\n"
         f"TEST_GROUP({project_name})\n"
@@ -55,7 +52,7 @@ def get_main_test(project_name: str):
         f"\n"
         f"TEST({project_name}, Fails)\n"
         f"{{\n"
-        f"    FAIL(\"If this fails then everything is set up properly.\");\n"
+        f'    FAIL("If this fails then everything is set up properly.");\n'
         f"}}\n"
         f"\n"
         f"#pragma clang diagnostic pop\n"
